@@ -77,14 +77,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Zetabytes Nepal — Smart Management Solutions for Fitness & Education" },
+      { name: "description", content: "Zetabytes Nepal builds Zean Fitness and Zean School — modern SaaS management systems for gyms, wellness studios, and schools across Nepal." },
+      { name: "author", content: "Zetabytes Nepal" },
+      { property: "og:title", content: "Zetabytes Nepal — Smart Management Solutions" },
+      { property: "og:description", content: "Zean Fitness and Zean School: complete management SaaS for fitness centers and schools." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
