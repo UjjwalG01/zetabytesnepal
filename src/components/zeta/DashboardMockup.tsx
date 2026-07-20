@@ -207,7 +207,7 @@ export function DashboardMockup({ product }: { product: Product }) {
         ))}
       </Tabs>
 
-      <div className="pointer-events-none absolute -inset-4 -z-10 rounded-[2rem] bg-gradient-to-tr from-primary/20 via-fuchsia-400/10 to-transparent blur-2xl" />
+      <div className="pointer-events-none absolute -inset-4 -z-10 rounded-[2rem] bg-brand/10 blur-2xl" />
     </div>
   );
 }

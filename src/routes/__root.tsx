@@ -11,6 +11,11 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SiteHeader } from "@/components/zeta/SiteHeader";
+import { SiteFooter } from "@/components/zeta/SiteFooter";
+import { TrialProvider } from "@/lib/trial-context";
+import { TrialModal } from "@/components/zeta/TrialModal";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -24,7 +29,7 @@ function NotFoundComponent() {
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand/90"
           >
             Go home
           </Link>
@@ -56,7 +61,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand/90"
           >
             Try again
           </button>
@@ -77,20 +82,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Zetabytes Nepal — Smart Management Solutions for Fitness & Education" },
-      { name: "description", content: "Zetabytes Nepal builds Zean Fitness and Zean School — modern SaaS management systems for gyms, wellness studios, and schools across Nepal." },
+      { title: "Zetabytes Nepal — Smart Management SaaS for Fitness & Education" },
+      {
+        name: "description",
+        content:
+          "Zetabytes Nepal builds Zean Fitness and Zean School — modern SaaS management systems for gyms, wellness studios, and schools across Nepal.",
+      },
       { name: "author", content: "Zetabytes Nepal" },
-      { property: "og:title", content: "Zetabytes Nepal — Smart Management Solutions" },
-      { property: "og:description", content: "Zean Fitness and Zean School: complete management SaaS for fitness centers and schools." },
+      { property: "og:site_name", content: "Zetabytes Nepal" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: appCss,
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
   shellComponent: RootShell,
@@ -118,8 +129,18 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <TrialProvider>
+        <div className="flex min-h-screen flex-col bg-background text-foreground">
+          <SiteHeader />
+          <main className="flex-1">
+            {/* Required: nested routes render here. */}
+            <Outlet />
+          </main>
+          <SiteFooter />
+        </div>
+        <TrialModal />
+        <Toaster position="top-center" richColors />
+      </TrialProvider>
     </QueryClientProvider>
   );
 }
