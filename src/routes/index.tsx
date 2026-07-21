@@ -13,10 +13,12 @@ import {
   Building2,
   TrendingUp,
   ShieldCheck,
+  Quote,
 } from "lucide-react";
 import { DashboardMockup } from "@/components/zeta/DashboardMockup";
 import { useTrial } from "@/lib/trial-context";
 import { PRODUCTS } from "@/lib/site";
+import { Reveal } from "@/components/zeta/Reveal";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -51,7 +53,7 @@ function HomePage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-background">
         <div className="mx-auto grid max-w-7xl gap-14 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
-          <div className="flex flex-col justify-center animate-fade-up">
+          <Reveal className="flex flex-col justify-center" y={30}>
             <Badge
               variant="secondary"
               className="w-fit gap-1.5 rounded-full border border-brand/20 bg-brand/10 px-3 py-1 text-brand"
@@ -86,9 +88,9 @@ function HomePage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Reveal>
 
-          <div className="animate-fade-up">
+          <Reveal delay={0.15} y={30}>
             <div className="mb-4 flex justify-center lg:justify-end">
               <Tabs value={product} onValueChange={(v) => setProduct(v as "fitness" | "school")}>
                 <TabsList>
@@ -102,7 +104,7 @@ function HomePage() {
               </Tabs>
             </div>
             <DashboardMockup product={product} />
-          </div>
+          </Reveal>
         </div>
       </section>
 
