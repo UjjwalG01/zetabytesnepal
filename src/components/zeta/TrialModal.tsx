@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { MessageCircle, ArrowRight, CheckCircle2 } from "lucide-react";
-import { SITE, PRODUCTS, type ProductSlug } from "@/lib/site";
+import { PRODUCTS, type ProductSlug } from "@/lib/site";
 import { useTrial } from "@/lib/trial-context";
 
 const PLAN_OPTIONS: Record<ProductSlug, string[]> = {
@@ -30,9 +31,32 @@ const PLAN_OPTIONS: Record<ProductSlug, string[]> = {
     "Standard (up to 1,000 students)",
     "Premium (unlimited, multi-branch)",
   ],
-  "student-portal": [], // free-form textarea
+  "student-portal": [],
   "zean-member-app": ["Standard member app", "Digital Pass"],
 };
+
+const WHATSAPP_NUMBER = "9779863612557"; // +977 9863612557
+const RATE_LIMIT_MS = 2 * 60 * 1000;
+const RATE_LIMIT_KEY = "zeta_trial_last_submit";
+
+// Accepts +977 98XXXXXXXX, 977..., or local 98XXXXXXXX / 97XXXXXXXX (Nepali mobile).
+const nepaliPhoneRegex = /^(?:\+?977[- ]?)?9[678]\d{8}$/;
+
+const step1Schema = z.object({
+  company: z.string().trim().min(2, "Company name is required").max(200),
+  contactName: z.string().trim().min(2, "Contact person is required").max(120),
+  phone: z
+    .string()
+    .trim()
+    .regex(nepaliPhoneRegex, "Enter a valid Nepali mobile (e.g. +977 98XXXXXXXX)"),
+  email: z
+    .string()
+    .trim()
+    .email("Enter a valid email address")
+    .max(255)
+    .optional()
+    .or(z.literal("")),
+});
 
 function slugToLabel(slug: ProductSlug) {
   return PRODUCTS.find((p) => p.slug === slug)?.name ?? slug;
@@ -49,6 +73,8 @@ export function TrialModal() {
   const [contactName, setContactName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState<null | { url: string; summary: string }>(null);
 
   const planOptions = PLAN_OPTIONS[product];
@@ -58,6 +84,7 @@ export function TrialModal() {
     if (open) {
       setStep(1);
       setSubmitted(null);
+      setErrors({});
       setProduct(prefill.productSlug ?? "zean-fitness");
       setPlan(prefill.planLabel ?? "");
       setDetails("");
@@ -65,17 +92,11 @@ export function TrialModal() {
   }, [open, prefill.productSlug, prefill.planLabel]);
 
   useEffect(() => {
-    // Reset plan when product changes
     setPlan("");
     setDetails("");
   }, [product]);
 
   const planOrDetails = needsFreeText ? details : plan;
-
-  const canContinueStep1 =
-    !!company.trim() && !!contactName.trim() && !!phone.trim();
-  const canSubmit =
-    canContinueStep1 && (needsFreeText ? !!details.trim() : !!plan);
 
   const summary = useMemo(
     () =>
@@ -83,23 +104,104 @@ export function TrialModal() {
     [product, planOrDetails, company],
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleContinue = () => {
+    const result = step1Schema.safeParse({ company, contactName, phone, email });
+    if (!result.success) {
+      const fe = result.error.flatten().fieldErrors;
+      setErrors({
+        company: fe.company?.[0] ?? "",
+        contactName: fe.contactName?.[0] ?? "",
+        phone: fe.phone?.[0] ?? "",
+        email: fe.email?.[0] ?? "",
+      });
+      return;
+    }
+    setErrors({});
+    setStep(2);
+  };
+
+  const buildWhatsAppUrl = () => {
+    const raw =
+      `*New Trial Request from Zetabytes Site*\n` +
+      `• *Organization:* ${company}\n` +
+      `• *Product:* ${slugToLabel(product)}\n` +
+      `• *Plan/Requirement:* ${planOrDetails}\n` +
+      `• *Contact Person:* ${contactName}\n` +
+      `• *Phone:* ${phone}` +
+      (email ? `\n• *Email:* ${email}` : "");
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(raw)}`;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canSubmit) return;
 
-    const msg =
-      `*New Trial Request from Zetabytes Site*%0A` +
-      `• *Organization:* ${encodeURIComponent(company)}%0A` +
-      `• *Product:* ${encodeURIComponent(slugToLabel(product))}%0A` +
-      `• *Plan/Requirement:* ${encodeURIComponent(planOrDetails)}%0A` +
-      `• *Contact Person:* ${encodeURIComponent(contactName)}%0A` +
-      `• *Phone:* ${encodeURIComponent(phone)}` +
-      (email ? `%0A• *Email:* ${encodeURIComponent(email)}` : "");
+    // Re-validate step 1 defensively
+    const step1 = step1Schema.safeParse({ company, contactName, phone, email });
+    const planValid = needsFreeText ? details.trim().length >= 5 : !!plan;
+    if (!step1.success) {
+      toast.error("Please review your contact details.");
+      setStep(1);
+      return;
+    }
+    if (!planValid) {
+      setErrors((p) => ({
+        ...p,
+        planOrDetails: needsFreeText
+          ? "Please describe your requirement (min 5 chars)"
+          : "Please pick a plan",
+      }));
+      return;
+    }
 
-    const whatsappUrl = `https://wa.me/${SITE.whatsapp}?text=${msg}`;
+    // Client-side rate limit
+    try {
+      const last = Number(localStorage.getItem(RATE_LIMIT_KEY) || 0);
+      const elapsed = Date.now() - last;
+      if (last && elapsed < RATE_LIMIT_MS) {
+        const wait = Math.ceil((RATE_LIMIT_MS - elapsed) / 1000);
+        toast.error(`Please wait ${wait}s before submitting again.`);
+        return;
+      }
+    } catch {
+      /* ignore storage errors */
+    }
 
+    setSubmitting(true);
+    const whatsappUrl = buildWhatsAppUrl();
+
+    try {
+      const res = await fetch("/api/trial-notification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          company,
+          contactName,
+          phone,
+          email,
+          product,
+          productLabel: slugToLabel(product),
+          planOrDetails,
+        }),
+      });
+      if (!res.ok) {
+        console.warn("trial notification api returned", res.status);
+      }
+    } catch (err) {
+      console.warn("trial notification failed", err);
+    }
+
+    try {
+      localStorage.setItem(RATE_LIMIT_KEY, String(Date.now()));
+    } catch {
+      /* ignore */
+    }
+
+    setSubmitting(false);
     setSubmitted({ url: whatsappUrl, summary });
     toast.success(summary);
+
+    // Auto-open WhatsApp so user can send the pre-filled message.
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -118,46 +220,48 @@ export function TrialModal() {
               </DialogDescription>
             </DialogHeader>
 
-            {/* Stepper */}
             <div className="mb-2 flex items-center gap-2 text-xs">
               <StepDot n={1} label="Your details" active={step >= 1} />
               <div className="h-px flex-1 bg-border" />
               <StepDot n={2} label="Product & plan" active={step >= 2} />
             </div>
 
-            <form className="space-y-4" onSubmit={handleSubmit}>
+            <form className="space-y-4" onSubmit={handleSubmit} noValidate>
               {step === 1 && (
                 <>
                   <div className="space-y-2">
                     <Label htmlFor="company">Company / Organization Name *</Label>
                     <Input
                       id="company"
-                      required
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
                       placeholder="Peak Fitness Kathmandu"
+                      aria-invalid={!!errors.company}
                     />
+                    {errors.company && <FieldError msg={errors.company} />}
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="contact">Contact Person *</Label>
                       <Input
                         id="contact"
-                        required
                         value={contactName}
                         onChange={(e) => setContactName(e.target.value)}
                         placeholder="Aashish Sharma"
+                        aria-invalid={!!errors.contactName}
                       />
+                      {errors.contactName && <FieldError msg={errors.contactName} />}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone Number *</Label>
                       <Input
                         id="phone"
-                        required
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+977 98..."
+                        placeholder="+977 98XXXXXXXX"
+                        aria-invalid={!!errors.phone}
                       />
+                      {errors.phone && <FieldError msg={errors.phone} />}
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -168,14 +272,15 @@ export function TrialModal() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@company.com"
+                      aria-invalid={!!errors.email}
                     />
+                    {errors.email && <FieldError msg={errors.email} />}
                   </div>
                   <DialogFooter className="pt-2">
                     <Button
                       type="button"
                       className="w-full bg-brand text-brand-foreground hover:bg-brand/90"
-                      disabled={!canContinueStep1}
-                      onClick={() => setStep(2)}
+                      onClick={handleContinue}
                     >
                       Continue <ArrowRight className="ml-1 h-4 w-4" />
                     </Button>
@@ -207,11 +312,12 @@ export function TrialModal() {
                       <Textarea
                         id="details"
                         rows={4}
-                        required
                         value={details}
                         onChange={(e) => setDetails(e.target.value)}
                         placeholder="Briefly describe your business scale & required modules (e.g., Student Portal App)"
+                        aria-invalid={!!errors.planOrDetails}
                       />
+                      {errors.planOrDetails && <FieldError msg={errors.planOrDetails} />}
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -228,6 +334,7 @@ export function TrialModal() {
                           ))}
                         </SelectContent>
                       </Select>
+                      {errors.planOrDetails && <FieldError msg={errors.planOrDetails} />}
                     </div>
                   )}
 
@@ -243,9 +350,9 @@ export function TrialModal() {
                     <Button
                       type="submit"
                       className="w-full bg-brand text-brand-foreground hover:bg-brand/90"
-                      disabled={!canSubmit}
+                      disabled={submitting}
                     >
-                      Submit Request
+                      {submitting ? "Submitting…" : "Submit & Continue on WhatsApp"}
                     </Button>
                   </DialogFooter>
                 </>
@@ -259,21 +366,17 @@ export function TrialModal() {
                 <CheckCircle2 className="h-6 w-6" />
               </div>
               <DialogTitle className="text-center font-heading">Request submitted</DialogTitle>
-              <DialogDescription className="text-center">
-                {submitted.summary}
-              </DialogDescription>
+              <DialogDescription className="text-center">{submitted.summary}</DialogDescription>
             </DialogHeader>
             <div className="rounded-lg border bg-surface p-4 text-xs text-muted-foreground">
-              Send the same details directly to our sales team on WhatsApp for the fastest reply.
+              WhatsApp should have opened in a new tab with your details pre-filled. If it didn't,
+              tap the button below.
             </div>
             <div className="flex flex-col gap-2 sm:flex-row">
-              <Button
-                asChild
-                className="w-full bg-[#25D366] text-white hover:bg-[#1ebe5a]"
-              >
+              <Button asChild className="w-full bg-[#25D366] text-white hover:bg-[#1ebe5a]">
                 <a href={submitted.url} target="_blank" rel="noreferrer">
                   <MessageCircle className="mr-1.5 h-4 w-4" />
-                  Continue to WhatsApp
+                  Open WhatsApp
                 </a>
               </Button>
               <Button variant="outline" className="w-full" onClick={closeTrial}>
@@ -285,6 +388,10 @@ export function TrialModal() {
       </DialogContent>
     </Dialog>
   );
+}
+
+function FieldError({ msg }: { msg: string }) {
+  return <p className="text-xs font-medium text-destructive">{msg}</p>;
 }
 
 function StepDot({ n, label, active }: { n: number; label: string; active: boolean }) {

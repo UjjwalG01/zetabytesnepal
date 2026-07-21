@@ -13,10 +13,12 @@ import {
   Building2,
   TrendingUp,
   ShieldCheck,
+  Quote,
 } from "lucide-react";
 import { DashboardMockup } from "@/components/zeta/DashboardMockup";
 import { useTrial } from "@/lib/trial-context";
 import { PRODUCTS } from "@/lib/site";
+import { Reveal } from "@/components/zeta/Reveal";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -51,7 +53,7 @@ function HomePage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-background">
         <div className="mx-auto grid max-w-7xl gap-14 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
-          <div className="flex flex-col justify-center animate-fade-up">
+          <Reveal className="flex flex-col justify-center" y={30}>
             <Badge
               variant="secondary"
               className="w-fit gap-1.5 rounded-full border border-brand/20 bg-brand/10 px-3 py-1 text-brand"
@@ -86,9 +88,9 @@ function HomePage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Reveal>
 
-          <div className="animate-fade-up">
+          <Reveal delay={0.15} y={30}>
             <div className="mb-4 flex justify-center lg:justify-end">
               <Tabs value={product} onValueChange={(v) => setProduct(v as "fitness" | "school")}>
                 <TabsList>
@@ -102,7 +104,7 @@ function HomePage() {
               </Tabs>
             </div>
             <DashboardMockup product={product} />
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -194,6 +196,51 @@ function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials */}
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <Reveal>
+          <SectionHead
+            eyebrow="Testimonials"
+            title="Trusted by teams across Nepal"
+            subtitle="From boutique gyms in Patan to multi-branch schools in Pokhara — here's what operators tell us."
+          />
+        </Reveal>
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {[
+            {
+              quote:
+                "Renewals, dues and attendance used to eat our mornings. Zean Fitness turned it into a 10-minute check.",
+              name: "Aashish Sharma",
+              role: "Owner, Peak Fitness Kathmandu",
+            },
+            {
+              quote:
+                "Parents finally get fee reminders and results on time. Our admin team saves at least 2 days every month.",
+              name: "Sabina Karki",
+              role: "Principal, Himalaya Public School",
+            },
+            {
+              quote:
+                "The onboarding team came onsite in Pokhara. Migration from spreadsheets was painless.",
+              name: "Rajesh Thapa",
+              role: "Director, Pokhara Sports Club",
+            },
+          ].map((t, i) => (
+            <Reveal key={t.name} delay={i * 0.1}>
+              <figure className="h-full rounded-2xl border bg-card p-6 transition hover:-translate-y-0.5 hover:shadow-md">
+                <Quote className="h-5 w-5 text-brand" />
+                <blockquote className="mt-3 text-sm text-foreground/90">"{t.quote}"</blockquote>
+                <figcaption className="mt-5">
+                  <div className="font-heading text-sm font-semibold">{t.name}</div>
+                  <div className="text-xs text-muted-foreground">{t.role}</div>
+                </figcaption>
+              </figure>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
 
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
