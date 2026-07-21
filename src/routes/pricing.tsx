@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle2, Dumbbell, GraduationCap, Users, Building2 } from "lucide-react";
 import { useTrial } from "@/lib/trial-context";
 import type { ProductSlug } from "@/lib/site";
+import { Reveal } from "@/components/zeta/Reveal";
 
 export const Route = createFileRoute("/pricing")({
   component: PricingPage,
@@ -116,49 +117,50 @@ function PricingPage() {
           plans.length === 3 ? "md:grid-cols-3" : "sm:grid-cols-2 lg:mx-auto lg:max-w-4xl"
         }`}
       >
-        {plans.map((p) => (
-          <div
-            key={p.name}
-            className={`relative rounded-2xl border bg-card p-6 transition hover:-translate-y-0.5 hover:shadow-lg animate-fade-up ${
-              p.highlight ? "border-brand ring-1 ring-brand/40" : ""
-            }`}
-          >
-            {p.highlight && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-0.5 text-xs font-semibold text-brand-foreground">
-                Most popular
-              </div>
-            )}
-            <div className="font-heading text-lg font-semibold">{p.name}</div>
-            <div className="text-xs text-muted-foreground">{p.tag}</div>
-            <div className="mt-5 flex items-baseline gap-1">
-              {p.price > 0 ? (
-                <>
-                  <span className="font-heading text-4xl font-bold">Rs. {p.price.toLocaleString()}</span>
-                  <span className="text-sm text-muted-foreground">
-                    / {yearly ? "mo, billed yearly" : "month"}
-                  </span>
-                </>
-              ) : (
-                <span className="font-heading text-3xl font-bold">Custom</span>
-              )}
-            </div>
-            <Button
-              className={`mt-5 w-full ${
-                p.highlight ? "bg-brand text-brand-foreground hover:bg-brand/90" : ""
+        {plans.map((p, i) => (
+          <Reveal key={p.name} delay={i * 0.08}>
+            <div
+              className={`relative h-full rounded-2xl border bg-card p-6 transition hover:-translate-y-0.5 hover:shadow-lg ${
+                p.highlight ? "border-brand ring-1 ring-brand/40" : ""
               }`}
-              variant={p.highlight ? "default" : "outline"}
-              onClick={() => openTrial({ productSlug: product, planLabel: p.name })}
             >
-              Get Started
-            </Button>
-            <ul className="mt-6 space-y-2 text-sm">
-              {p.features.map((f) => (
-                <li key={f} className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> {f}
-                </li>
-              ))}
-            </ul>
-          </div>
+              {p.highlight && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-0.5 text-xs font-semibold text-brand-foreground">
+                  Most popular
+                </div>
+              )}
+              <div className="font-heading text-lg font-semibold">{p.name}</div>
+              <div className="text-xs text-muted-foreground">{p.tag}</div>
+              <div className="mt-5 flex items-baseline gap-1">
+                {p.price > 0 ? (
+                  <>
+                    <span className="font-heading text-4xl font-bold">Rs. {p.price.toLocaleString()}</span>
+                    <span className="text-sm text-muted-foreground">
+                      / {yearly ? "mo, billed yearly" : "month"}
+                    </span>
+                  </>
+                ) : (
+                  <span className="font-heading text-3xl font-bold">Custom</span>
+                )}
+              </div>
+              <Button
+                className={`mt-5 w-full ${
+                  p.highlight ? "bg-brand text-brand-foreground hover:bg-brand/90" : ""
+                }`}
+                variant={p.highlight ? "default" : "outline"}
+                onClick={() => openTrial({ productSlug: product, planLabel: p.name })}
+              >
+                Get Started
+              </Button>
+              <ul className="mt-6 space-y-2 text-sm">
+                {p.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
         ))}
       </div>
 
