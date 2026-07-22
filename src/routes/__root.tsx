@@ -4,13 +4,10 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
-  HeadContent,
-  Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect } from "react";
 
-import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "@/components/zeta/SiteHeader";
 import { SiteFooter } from "@/components/zeta/SiteFooter";
 import { TrialProvider } from "@/lib/trial-context";
@@ -42,9 +39,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -53,7 +47,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           This page didn't load
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          Something went wrong. Try refreshing or head back home.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -80,48 +74,55 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Zetabytes Nepal — Smart Management SaaS for Fitness & Education" },
+      {
+        title: "Zetabytes Nepal — Smart Management SaaS for Fitness & Education",
+      },
       {
         name: "description",
         content:
           "Zetabytes Nepal builds Zean Fitness and Zean School — modern SaaS management systems for gyms, wellness studios, and schools across Nepal.",
       },
-      { name: "author", content: "Zetabytes Nepal" },
-      { property: "og:site_name", content: "Zetabytes Nepal" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap",
-      },
     ],
   }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
+/**
+ * Client-side sync of TanStack Router `head()` output into <head>.
+ * Replaces the SSR-only <HeadContent /> shell so per-route titles /
+ * meta descriptions still update in this pure SPA build.
+ */
+function DocumentHeadSync() {
+  const matches = useRouterState({ select: (s) => s.matches });
+
+  useEffect(() => {
+    let title: string | undefined;
+    let description: string | undefined;
+
+    for (const m of matches) {
+      const meta = (m as { meta?: Array<Record<string, string | undefined>> }).meta;
+      if (!Array.isArray(meta)) continue;
+      for (const tag of meta) {
+        if (tag.title) title = tag.title;
+        if (tag.name === "description" && tag.content) description = tag.content;
+      }
+    }
+
+    if (title) document.title = title;
+    if (description) {
+      let el = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute("name", "description");
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", description);
+    }
+  }, [matches]);
+
+  return null;
 }
 
 function RootComponent() {
@@ -130,10 +131,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <TrialProvider>
+        <DocumentHeadSync />
         <div className="flex min-h-screen flex-col bg-background text-foreground">
           <SiteHeader />
           <main className="flex-1">
-            {/* Required: nested routes render here. */}
             <Outlet />
           </main>
           <SiteFooter />
