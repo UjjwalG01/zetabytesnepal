@@ -169,26 +169,7 @@ export function TrialModal() {
     setSubmitting(true);
     const whatsappUrl = buildWhatsAppUrl();
 
-    try {
-      const res = await fetch("/api/trial-notification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          company,
-          contactName,
-          phone,
-          email,
-          product,
-          productLabel: slugToLabel(product),
-          planOrDetails,
-        }),
-      });
-      if (!res.ok) {
-        console.warn("trial notification api returned", res.status);
-      }
-    } catch (err) {
-      console.warn("trial notification failed", err);
-    }
+    // Static SPA build — no backend. Lead is delivered via WhatsApp only.
 
     try {
       localStorage.setItem(RATE_LIMIT_KEY, String(Date.now()));

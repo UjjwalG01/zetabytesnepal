@@ -15,7 +15,6 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutUsRouteImport } from './routes/about-us'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
-import { Route as ApiTrialNotificationRouteImport } from './routes/api/trial-notification'
 
 const ProductsRoute = ProductsRouteImport.update({
   id: '/products',
@@ -47,11 +46,6 @@ const ProductsSlugRoute = ProductsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ProductsRoute,
 } as any)
-const ApiTrialNotificationRoute = ApiTrialNotificationRouteImport.update({
-  id: '/api/trial-notification',
-  path: '/api/trial-notification',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,7 +53,6 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/pricing': typeof PricingRoute
   '/products': typeof ProductsRouteWithChildren
-  '/api/trial-notification': typeof ApiTrialNotificationRoute
   '/products/$slug': typeof ProductsSlugRoute
 }
 export interface FileRoutesByTo {
@@ -68,7 +61,6 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/pricing': typeof PricingRoute
   '/products': typeof ProductsRouteWithChildren
-  '/api/trial-notification': typeof ApiTrialNotificationRoute
   '/products/$slug': typeof ProductsSlugRoute
 }
 export interface FileRoutesById {
@@ -78,7 +70,6 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/pricing': typeof PricingRoute
   '/products': typeof ProductsRouteWithChildren
-  '/api/trial-notification': typeof ApiTrialNotificationRoute
   '/products/$slug': typeof ProductsSlugRoute
 }
 export interface FileRouteTypes {
@@ -89,7 +80,6 @@ export interface FileRouteTypes {
     | '/contact'
     | '/pricing'
     | '/products'
-    | '/api/trial-notification'
     | '/products/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -98,7 +88,6 @@ export interface FileRouteTypes {
     | '/contact'
     | '/pricing'
     | '/products'
-    | '/api/trial-notification'
     | '/products/$slug'
   id:
     | '__root__'
@@ -107,7 +96,6 @@ export interface FileRouteTypes {
     | '/contact'
     | '/pricing'
     | '/products'
-    | '/api/trial-notification'
     | '/products/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -117,7 +105,6 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   PricingRoute: typeof PricingRoute
   ProductsRoute: typeof ProductsRouteWithChildren
-  ApiTrialNotificationRoute: typeof ApiTrialNotificationRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -164,13 +151,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsSlugRouteImport
       parentRoute: typeof ProductsRoute
     }
-    '/api/trial-notification': {
-      id: '/api/trial-notification'
-      path: '/api/trial-notification'
-      fullPath: '/api/trial-notification'
-      preLoaderRoute: typeof ApiTrialNotificationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -192,18 +172,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   PricingRoute: PricingRoute,
   ProductsRoute: ProductsRouteWithChildren,
-  ApiTrialNotificationRoute: ApiTrialNotificationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
