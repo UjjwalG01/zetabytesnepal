@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Target, Heart, Rocket } from "lucide-react";
+import { SITE_URL } from "@/lib/site";
 
 export const Route = createFileRoute("/about-us")({
   component: AboutPage,
@@ -14,7 +15,7 @@ export const Route = createFileRoute("/about-us")({
       },
       { property: "og:title", content: "About Zetabytes Nepal" },
     ],
-    links: [{ rel: "canonical", href: "https://zetabytesnepal.lovable.app/about-us" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/about-us` }],
   }),
 });
 
@@ -23,14 +24,16 @@ function AboutPage() {
     <>
       <section className="border-b bg-surface">
         <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
-          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">About Us</div>
+          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
+            About Us
+          </div>
           <h1 className="mt-2 font-heading text-4xl font-bold sm:text-5xl">
             Software built in Nepal, for Nepal
           </h1>
           <p className="mt-5 text-muted-foreground">
             Zetabytes Nepal is a Kathmandu-based product company building the{" "}
-            <strong className="text-foreground">Zean Software Suite</strong> — modern SaaS for
-            gyms, wellness studios, schools and institutions. We combine local support with
+            <strong className="text-foreground">Zean Software Suite</strong> — modern SaaS for gyms,
+            wellness studios, schools and institutions. We combine local support with
             enterprise-grade engineering, so every gym owner and school principal can run a modern
             operation without a modern-tech budget.
           </p>
@@ -49,17 +52,33 @@ function AboutPage() {
             </p>
             <p className="mt-4 text-muted-foreground">
               Today Zean powers 45+ schools and 1,200+ tracked gym members across cities like
-              Kathmandu, Pokhara, Bharatpur, Butwal and Biratnagar. Every feature is shaped by
-              real feedback from the teams using it.
+              Kathmandu, Pokhara, Bharatpur, Butwal and Biratnagar. Every feature is shaped by real
+              feedback from the teams using it.
             </p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             {[
-              { icon: Target, title: "Our mission", body: "Give every Nepali institution modern software that just works." },
-              { icon: Heart, title: "Our values", body: "Honest pricing, fast support, and shipping the boring stuff well." },
-              { icon: Rocket, title: "How we work", body: "Small team, product-led, close to customers — no middlemen." },
-              { icon: CheckCircle2, title: "Our promise", body: "You go live in weeks with our team beside you the whole way." },
+              {
+                icon: Target,
+                title: "Our mission",
+                body: "Give every Nepali institution modern software that just works.",
+              },
+              {
+                icon: Heart,
+                title: "Our values",
+                body: "Honest pricing, fast support, and shipping the boring stuff well.",
+              },
+              {
+                icon: Rocket,
+                title: "How we work",
+                body: "Small team, product-led, close to customers — no middlemen.",
+              },
+              {
+                icon: CheckCircle2,
+                title: "Our promise",
+                body: "You go live in weeks with our team beside you the whole way.",
+              },
             ].map((v) => {
               const Icon = v.icon;
               return (

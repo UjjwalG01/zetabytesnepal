@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useRouterState } from "@tanstack/react-router";
 import { Dumbbell, GraduationCap, Users, Building2, ArrowRight } from "lucide-react";
-import { PRODUCTS } from "@/lib/site";
+import { PRODUCTS, SITE_URL } from "@/lib/site";
 
 export const Route = createFileRoute("/products")({
   component: ProductsLayout,
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/products")({
       },
       { property: "og:title", content: "Zean Software Suite — Zetabytes Nepal" },
     ],
-    links: [{ rel: "canonical", href: "https://zetabytesnepal.lovable.app/products" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/products` }],
   }),
 });
 
@@ -65,12 +65,11 @@ function ProductsLayout() {
                 <div className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">
                   {p.tag}
                 </div>
-                <p className="mt-4 text-sm text-muted-foreground">
-                  {productBlurb(p.slug)}
-                </p>
+                <p className="mt-4 text-sm text-muted-foreground">{productBlurb(p.slug)}</p>
               </div>
               <div className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-brand">
-                View product <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                View product{" "}
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
               </div>
             </Link>
           );

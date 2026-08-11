@@ -1,17 +1,17 @@
 export const SITE = {
   name: "Zetabytes Nepal",
   tagline: "Smart Management Solutions for Fitness & Education",
-  phone: "9863612557",
-  phoneDisplay: "+977 9863612557",
-  whatsapp: "9779863612557",
+  phone: "9716801616",
+  phoneDisplay: "+977 971-6801616",
+  whatsapp: "9716801616",
   email: "info@zeansoftware.com",
-  address: "Kathmandu, Nepal",
+  address: "Chabahil-07, Kathmandu, Nepal",
   social: {
-    facebook: "#",
-    instagram: "#",
+    facebook: "https://www.facebook.com/profile.php?id=61591654724497",
+    instagram: "https://www.instagram.com/zetabytenepal/",
     linkedin: "#",
-    youtube: "#",
-    twitter: "#",
+    youtube: "https://www.youtube.com/",
+    twitter: "https://www.x.com/",
   },
 } as const;
 
@@ -23,3 +23,5 @@ export const PRODUCTS = [
 ] as const;
 
 export type ProductSlug = (typeof PRODUCTS)[number]["slug"];
+
+export const SITE_URL = "https://zeansoftware.com"

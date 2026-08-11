@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
-import { SITE } from "@/lib/site";
+import { SITE, SITE_URL } from "@/lib/site";
 import { SocialIcons } from "@/components/zeta/SocialIcons";
 import { toast } from "sonner";
 
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/contact")({
       },
       { property: "og:title", content: "Contact Zetabytes Nepal" },
     ],
-    links: [{ rel: "canonical", href: "https://zetabytesnepal.lovable.app/contact" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/contact` }],
   }),
 });
 
@@ -43,6 +43,7 @@ function ContactPage() {
       (email ? `• *Email:* ${encodeURIComponent(email)}%0A` : "") +
       `• *Message:* ${encodeURIComponent(message)}`;
     const url = `https://wa.me/${SITE.whatsapp}?text=${msg}`;
+
     setTimeout(() => {
       setSending(false);
       toast.success(`Thanks ${name || "there"}! Redirecting to WhatsApp…`);
@@ -63,8 +64,18 @@ function ContactPage() {
 
       <div className="mt-14 grid gap-10 lg:grid-cols-[1fr_1.2fr]">
         <div className="space-y-6">
-          <ContactCard icon={<Phone className="h-5 w-5" />} title="Call us" body={SITE.phoneDisplay} href={`tel:${SITE.phone}`} />
-          <ContactCard icon={<Mail className="h-5 w-5" />} title="Email" body={SITE.email} href={`mailto:${SITE.email}`} />
+          <ContactCard
+            icon={<Phone className="h-5 w-5" />}
+            title="Call us"
+            body={SITE.phoneDisplay}
+            href={`tel:${SITE.phone}`}
+          />
+          <ContactCard
+            icon={<Mail className="h-5 w-5" />}
+            title="Email"
+            body={SITE.email}
+            href={`mailto:${SITE.email}`}
+          />
           <ContactCard
             icon={<MessageCircle className="h-5 w-5" />}
             title="WhatsApp"
@@ -80,10 +91,7 @@ function ContactPage() {
           </div>
         </div>
 
-        <form
-          onSubmit={onSubmit}
-          className="rounded-2xl border bg-card p-6 sm:p-8 animate-fade-up"
-        >
+        <form onSubmit={onSubmit} className="rounded-2xl border bg-card p-6 sm:p-8 animate-fade-up">
           <h2 className="font-heading text-xl font-bold">Send us a message</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Fill in the form and we'll continue on WhatsApp for faster replies.
@@ -99,11 +107,22 @@ function ContactPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Phone *</Label>
-              <Input id="phone" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+977 98..." />
+              <Input
+                id="phone"
+                required
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+977 98..."
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
           </div>
           <div className="mt-4 space-y-2">
@@ -155,7 +174,12 @@ function ContactCard({
   const cls =
     "block rounded-2xl border bg-card p-5 transition hover:border-brand/40 hover:shadow-md";
   return href ? (
-    <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" className={cls}>
+    <a
+      href={href}
+      target={href.startsWith("http") ? "_blank" : undefined}
+      rel="noreferrer"
+      className={cls}
+    >
       {inner}
     </a>
   ) : (

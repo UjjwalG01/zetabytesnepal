@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { DashboardMockup } from "@/components/zeta/DashboardMockup";
 import { useTrial } from "@/lib/trial-context";
-import { PRODUCTS } from "@/lib/site";
+import { PRODUCTS, SITE_URL } from "@/lib/site";
 import { Reveal } from "@/components/zeta/Reveal";
 
 export const Route = createFileRoute("/")({
@@ -31,9 +31,13 @@ export const Route = createFileRoute("/")({
           "Modern management SaaS built in Nepal — Zean Fitness for gyms, Zean School for schools, plus student & member apps.",
       },
       { property: "og:title", content: "Zetabytes Nepal — Smart SaaS for Fitness & Education" },
-      { property: "og:description", content: "Zean Fitness, Zean School, Student Portal and Member App — one platform, made in Nepal." },
+      {
+        property: "og:description",
+        content:
+          "Zean Fitness, Zean School, Student Portal and Member App — one platform, made in Nepal.",
+      },
     ],
-    links: [{ rel: "canonical", href: "https://zetabytesnepal.lovable.app/" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
   }),
 });
 
@@ -113,7 +117,9 @@ function HomePage() {
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 py-12 sm:px-6 lg:grid-cols-4 lg:px-8">
           {STATS.map((s) => (
             <div key={s.label}>
-              <div className="font-heading text-3xl font-bold text-brand sm:text-4xl">{s.value}</div>
+              <div className="font-heading text-3xl font-bold text-brand sm:text-4xl">
+                {s.value}
+              </div>
               <div className="mt-1 text-sm text-muted-foreground">{s.label}</div>
             </div>
           ))}
@@ -147,7 +153,8 @@ function HomePage() {
                 {p.tag}
               </div>
               <div className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand">
-                Learn more <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+                Learn more{" "}
+                <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
               </div>
             </Link>
           ))}
@@ -157,10 +164,7 @@ function HomePage() {
       {/* Why us */}
       <section className="border-y bg-surface py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <SectionHead
-            eyebrow="Why Zetabytes"
-            title="Built for Nepal, engineered for scale"
-          />
+          <SectionHead eyebrow="Why Zetabytes" title="Built for Nepal, engineered for scale" />
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {[
               {
@@ -241,7 +245,6 @@ function HomePage() {
         </div>
       </section>
 
-
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="rounded-3xl border bg-brand p-10 text-brand-foreground shadow-lg sm:p-16">
@@ -280,7 +283,15 @@ function HomePage() {
   );
 }
 
-function SectionHead({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle?: string }) {
+function SectionHead({
+  eyebrow,
+  title,
+  subtitle,
+}: {
+  eyebrow: string;
+  title: string;
+  subtitle?: string;
+}) {
   return (
     <div className="mx-auto max-w-2xl text-center">
       <div className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">{eyebrow}</div>

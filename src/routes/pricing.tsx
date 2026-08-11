@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle2, Dumbbell, GraduationCap, Users, Building2 } from "lucide-react";
 import { useTrial } from "@/lib/trial-context";
-import type { ProductSlug } from "@/lib/site";
+import { SITE_URL, type ProductSlug } from "@/lib/site";
 import { Reveal } from "@/components/zeta/Reveal";
 
 export const Route = createFileRoute("/pricing")({
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/pricing")({
       },
       { property: "og:title", content: "Pricing — Zetabytes Nepal" },
     ],
-    links: [{ rel: "canonical", href: "https://zetabytesnepal.lovable.app/pricing" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/pricing` }],
   }),
 });
 
@@ -33,36 +33,117 @@ const PLANS: Record<ProductSlug, (yearly: boolean) => Plan[]> = {
       name: "Basic",
       price: y ? 1699 : 1999,
       tag: "Great for a single studio",
-      features: ["Up to 500 members", "Attendance & check-ins", "Basic bookings", "Payments & receipts", "Email support"],
+      features: [
+        "Up to 500 members",
+        "Attendance & check-ins",
+        "Basic bookings",
+        "Payments & receipts",
+        "Email support",
+      ],
     },
     {
       name: "Premium",
       price: y ? 2549 : 2999,
       tag: "For multi-branch clubs",
-      features: ["Unlimited members", "Biometric access", "Advanced bookings & PT", "Reports & forecasting", "Staff & payroll", "Priority support"],
+      features: [
+        "Unlimited members",
+        "Biometric access",
+        "Advanced bookings & PT",
+        "Reports & forecasting",
+        "Staff & payroll",
+        "Priority support",
+      ],
       highlight: true,
     },
   ],
   "zean-school": (y) => [
-    { name: "Basic", price: y ? 3399 : 3999, tag: "For small schools", features: ["Up to 300 students", "Attendance & exams", "Fee collection", "Parent SMS", "Email support"] },
-    { name: "Standard", price: y ? 5099 : 5999, tag: "Growing institutions", features: ["Up to 1,000 students", "Parent app", "Timetable & grading", "Library & transport", "Online payments", "Priority support"], highlight: true },
-    { name: "Premium", price: y ? 8499 : 9999, tag: "Fully custom", features: ["Unlimited students", "Multi-branch", "Custom modules", "Dedicated onboarding", "API access", "24×7 support"] },
+    {
+      name: "Basic",
+      price: y ? 3399 : 3999,
+      tag: "For small schools",
+      features: [
+        "Up to 300 students",
+        "Attendance & exams",
+        "Fee collection",
+        "Parent SMS",
+        "Email support",
+      ],
+    },
+    {
+      name: "Standard",
+      price: y ? 5099 : 5999,
+      tag: "Growing institutions",
+      features: [
+        "Up to 1,000 students",
+        "Parent app",
+        "Timetable & grading",
+        "Library & transport",
+        "Online payments",
+        "Priority support",
+      ],
+      highlight: true,
+    },
+    {
+      name: "Premium",
+      price: y ? 8499 : 9999,
+      tag: "Fully custom",
+      features: [
+        "Unlimited students",
+        "Multi-branch",
+        "Custom modules",
+        "Dedicated onboarding",
+        "API access",
+        "24×7 support",
+      ],
+    },
   ],
   "student-portal": (y) => [
-    { name: "Starter", price: y ? 1699 : 1999, tag: "Small institution portal", features: ["Up to 500 users", "Notifications & circulars", "Attendance view", "Basic customization"] },
-    { name: "Custom Build", price: y ? 0 : 0, tag: "Priced per requirement", features: ["Custom modules", "Branded mobile app", "SSO & role scoping", "Dedicated onboarding"], highlight: true },
+    {
+      name: "Starter",
+      price: y ? 1699 : 1999,
+      tag: "Small institution portal",
+      features: [
+        "Up to 500 users",
+        "Notifications & circulars",
+        "Attendance view",
+        "Basic customization",
+      ],
+    },
+    {
+      name: "Custom Build",
+      price: y ? 0 : 0,
+      tag: "Priced per requirement",
+      features: [
+        "Custom modules",
+        "Branded mobile app",
+        "SSO & role scoping",
+        "Dedicated onboarding",
+      ],
+      highlight: true,
+    },
   ],
   "zean-member-app": (y) => [
-    { name: "Standard Member App", price: y ? 1274 : 1499, tag: "Branded app for your club", features: ["Class bookings", "Digital pass (QR)", "Dues & renewals", "Push notifications"] },
-    { name: "Digital Pass", price: y ? 849 : 999, tag: "Lightweight member entry", features: ["QR/digital pass only", "Basic profile", "Renewal reminders", "Standard support"], highlight: true },
+    {
+      name: "Standard Member App",
+      price: y ? 1274 : 1499,
+      tag: "Branded app for your club",
+      features: ["Class bookings", "Digital pass (QR)", "Dues & renewals", "Push notifications"],
+    },
+    {
+      name: "Digital Pass",
+      price: y ? 849 : 999,
+      tag: "Lightweight member entry",
+      features: ["QR/digital pass only", "Basic profile", "Renewal reminders", "Standard support"],
+      highlight: true,
+    },
   ],
 };
 
 const TABS: { slug: ProductSlug; label: string; icon: typeof Dumbbell }[] = [
   { slug: "zean-fitness", label: "Zean Fitness", icon: Dumbbell },
   { slug: "zean-school", label: "Zean School", icon: GraduationCap },
-  { slug: "student-portal", label: "Student Portal", icon: Users },
-  { slug: "zean-member-app", label: "Member App", icon: Building2 },
+  // { slug: "student-portal", label: "Student Portal", icon: Users },
+  // { slug: "zean-member-app", label: "Member App", icon: Building2 },
 ];
 
 function PricingPage() {
@@ -80,8 +161,8 @@ function PricingPage() {
           Simple pricing, priced in NPR
         </h1>
         <p className="mt-4 text-muted-foreground">
-          Switch products or billing frequency below. All plans include onboarding and local
-          support from our Kathmandu team.
+          Switch products or billing frequency below. All plans include onboarding and local support
+          from our Kathmandu team.
         </p>
       </div>
 
@@ -99,11 +180,15 @@ function PricingPage() {
           </TabsList>
         </Tabs>
         <div className="flex items-center gap-3 rounded-full border bg-card px-4 py-2">
-          <span className={`text-sm ${!yearly ? "font-semibold text-foreground" : "text-muted-foreground"}`}>
+          <span
+            className={`text-sm ${!yearly ? "font-semibold text-foreground" : "text-muted-foreground"}`}
+          >
             Monthly
           </span>
           <Switch checked={yearly} onCheckedChange={setYearly} />
-          <span className={`text-sm ${yearly ? "font-semibold text-foreground" : "text-muted-foreground"}`}>
+          <span
+            className={`text-sm ${yearly ? "font-semibold text-foreground" : "text-muted-foreground"}`}
+          >
             Yearly{" "}
             <Badge variant="secondary" className="ml-1 bg-brand/10 text-brand hover:bg-brand/10">
               Save 15%
@@ -134,7 +219,9 @@ function PricingPage() {
               <div className="mt-5 flex items-baseline gap-1">
                 {p.price > 0 ? (
                   <>
-                    <span className="font-heading text-4xl font-bold">Rs. {p.price.toLocaleString()}</span>
+                    <span className="font-heading text-4xl font-bold">
+                      Rs. {p.price.toLocaleString()}
+                    </span>
                     <span className="text-sm text-muted-foreground">
                       / {yearly ? "mo, billed yearly" : "month"}
                     </span>

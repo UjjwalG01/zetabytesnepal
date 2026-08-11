@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { MessageCircle, ArrowRight, CheckCircle2 } from "lucide-react";
-import { PRODUCTS, type ProductSlug } from "@/lib/site";
+import { PRODUCTS, SITE, type ProductSlug } from "@/lib/site";
 import { useTrial } from "@/lib/trial-context";
 
 const PLAN_OPTIONS: Record<ProductSlug, string[]> = {
@@ -35,7 +35,7 @@ const PLAN_OPTIONS: Record<ProductSlug, string[]> = {
   "zean-member-app": ["Standard member app", "Digital Pass"],
 };
 
-const WHATSAPP_NUMBER = "9779863612557"; // +977 9863612557
+const WHATSAPP_NUMBER = SITE.phone;
 const RATE_LIMIT_MS = 2 * 60 * 1000;
 const RATE_LIMIT_KEY = "zeta_trial_last_submit";
 
@@ -120,16 +120,24 @@ export function TrialModal() {
     setStep(2);
   };
 
+
+
   const buildWhatsAppUrl = () => {
-    const raw =
-      `*New Trial Request from Zetabytes Site*\n` +
-      `• *Organization:* ${company}\n` +
-      `• *Product:* ${slugToLabel(product)}\n` +
-      `• *Plan/Requirement:* ${planOrDetails}\n` +
-      `• *Contact Person:* ${contactName}\n` +
-      `• *Phone:* ${phone}` +
-      (email ? `\n• *Email:* ${email}` : "");
-    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(raw)}`;
+    const cleanNumber = WHATSAPP_NUMBER.replace(/\D/g, "");
+
+    const raw = [
+      "*New Trial Request from Zetabytes Site*",
+      `• *Organization:* ${company}`,
+      `• *Product:* ${slugToLabel(product)}`,
+      `• *Plan/Requirement:* ${planOrDetails}`,
+      `• *Contact Person:* ${contactName}`,
+      `• *Phone:* ${phone}`,
+      email ? `• *Email:* ${email}` : ""
+    ].filter(Boolean).join("\n");
+
+    const url = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(raw)}`;
+
+    return url;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -379,9 +387,8 @@ function StepDot({ n, label, active }: { n: number; label: string; active: boole
   return (
     <div className="flex items-center gap-2">
       <span
-        className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ${
-          active ? "bg-brand text-brand-foreground" : "bg-secondary text-muted-foreground"
-        }`}
+        className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ${active ? "bg-brand text-brand-foreground" : "bg-secondary text-muted-foreground"
+          }`}
       >
         {n}
       </span>

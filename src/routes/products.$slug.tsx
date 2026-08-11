@@ -19,7 +19,7 @@ import {
   UserCog,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { PRODUCTS, type ProductSlug } from "@/lib/site";
+import { PRODUCTS, SITE_URL, type ProductSlug } from "@/lib/site";
 import { useTrial } from "@/lib/trial-context";
 
 export const Route = createFileRoute("/products/$slug")({
@@ -34,11 +34,14 @@ export const Route = createFileRoute("/products/$slug")({
     return {
       meta: [
         { title: `${name} — Zetabytes Nepal` },
-        { name: "description", content: `${name} by Zetabytes Nepal — modern SaaS built for Nepali institutions.` },
+        {
+          name: "description",
+          content: `${name} by Zetabytes Nepal — modern SaaS built for Nepali institutions.`,
+        },
         { property: "og:title", content: `${name} — Zetabytes Nepal` },
         { property: "og:type", content: "product" },
       ],
-      links: [{ rel: "canonical", href: `https://zetabytesnepal.lovable.app/products/${params.slug}` }],
+      links: [{ rel: "canonical", href: `${SITE_URL}/about-us/products/${params.slug}` }],
     };
   },
 });
@@ -54,56 +57,172 @@ const CONTENT: Record<
     hero: "Run your gym like a modern brand",
     sub: "From single studios to multi-branch chains — automate check-ins, class bookings, payments and member engagement.",
     features: [
-      { icon: Users, title: "Member Management", body: "Profiles, plans, renewals and family/corporate accounts." },
-      { icon: CalendarCheck, title: "Biometric Attendance", body: "Fingerprint, RFID and QR check-ins with real-time gates." },
-      { icon: ClipboardList, title: "Class & PT Bookings", body: "Recurring schedules, waitlists and self-booking portal." },
-      { icon: Wallet, title: "Payments & POS", body: "eSewa, Khalti, cards, invoices and in-club retail POS." },
-      { icon: BarChart3, title: "Reports & Forecast", body: "Churn, retention, LTV and revenue forecasts." },
-      { icon: UserCog, title: "Staff & Payroll", body: "Rosters, PT commissions and attendance-linked payroll." },
+      {
+        icon: Users,
+        title: "Member Management",
+        body: "Profiles, plans, renewals and family/corporate accounts.",
+      },
+      {
+        icon: CalendarCheck,
+        title: "Biometric Attendance",
+        body: "Fingerprint, RFID and QR check-ins with real-time gates.",
+      },
+      {
+        icon: ClipboardList,
+        title: "Class & PT Bookings",
+        body: "Recurring schedules, waitlists and self-booking portal.",
+      },
+      {
+        icon: Wallet,
+        title: "Payments & POS",
+        body: "eSewa, Khalti, cards, invoices and in-club retail POS.",
+      },
+      {
+        icon: BarChart3,
+        title: "Reports & Forecast",
+        body: "Churn, retention, LTV and revenue forecasts.",
+      },
+      {
+        icon: UserCog,
+        title: "Staff & Payroll",
+        body: "Rosters, PT commissions and attendance-linked payroll.",
+      },
     ],
-    useCases: ["Independent gyms", "Multi-branch chains", "Yoga & pilates studios", "CrossFit boxes", "Corporate wellness centers"],
+    useCases: [
+      "Independent gyms",
+      "Multi-branch chains",
+      "Yoga & pilates studios",
+      "CrossFit boxes",
+      "Corporate wellness centers",
+    ],
   },
   "zean-school": {
     icon: GraduationCap,
     hero: "One system for the whole school",
     sub: "Admissions to alumni, exams to fees, classroom to bus — modules and pricing tailored to your institution.",
     features: [
-      { icon: GraduationCap, title: "Student Information", body: "Admissions, sections, guardians and document vault." },
-      { icon: CalendarCheck, title: "Attendance", body: "Class & subject attendance with parent SMS alerts." },
-      { icon: BookOpen, title: "Exams & Grading", body: "Custom marking schemes, marksheets and GPAs." },
-      { icon: Wallet, title: "Fee Management", body: "Fee heads, discounts, gateways and auto-reminders." },
-      { icon: MessageSquare, title: "Parent Communication", body: "Parent app, homework, circulars and chat." },
-      { icon: Bus, title: "Transport & Library", body: "Routes, GPS tracking, library issue/return and fines." },
+      {
+        icon: GraduationCap,
+        title: "Student Information",
+        body: "Admissions, sections, guardians and document vault.",
+      },
+      {
+        icon: CalendarCheck,
+        title: "Attendance",
+        body: "Class & subject attendance with parent SMS alerts.",
+      },
+      {
+        icon: BookOpen,
+        title: "Exams & Grading",
+        body: "Custom marking schemes, marksheets and GPAs.",
+      },
+      {
+        icon: Wallet,
+        title: "Fee Management",
+        body: "Fee heads, discounts, gateways and auto-reminders.",
+      },
+      {
+        icon: MessageSquare,
+        title: "Parent Communication",
+        body: "Parent app, homework, circulars and chat.",
+      },
+      {
+        icon: Bus,
+        title: "Transport & Library",
+        body: "Routes, GPS tracking, library issue/return and fines.",
+      },
     ],
-    useCases: ["Primary & secondary schools", "Colleges & +2 institutes", "Language & tuition centers", "Boarding schools", "Multi-branch networks"],
+    useCases: [
+      "Primary & secondary schools",
+      "Colleges & +2 institutes",
+      "Language & tuition centers",
+      "Boarding schools",
+      "Multi-branch networks",
+    ],
   },
   "student-portal": {
     icon: Users,
     hero: "A student portal built around your institution",
     sub: "A branded web + mobile portal for students and parents — configured to your modules, scale and workflows.",
     features: [
-      { icon: BookOpen, title: "Course & Content", body: "Timetables, syllabus, homework and study material." },
-      { icon: ClipboardList, title: "Assignments", body: "Submissions, grading and teacher feedback." },
-      { icon: CalendarCheck, title: "Attendance View", body: "Live class-wise attendance for students and parents." },
-      { icon: MessageSquare, title: "Notifications", body: "Circulars, exam schedules and event updates." },
+      {
+        icon: BookOpen,
+        title: "Course & Content",
+        body: "Timetables, syllabus, homework and study material.",
+      },
+      {
+        icon: ClipboardList,
+        title: "Assignments",
+        body: "Submissions, grading and teacher feedback.",
+      },
+      {
+        icon: CalendarCheck,
+        title: "Attendance View",
+        body: "Live class-wise attendance for students and parents.",
+      },
+      {
+        icon: MessageSquare,
+        title: "Notifications",
+        body: "Circulars, exam schedules and event updates.",
+      },
       { icon: Wallet, title: "Fee Portal", body: "Online fee payments with digital receipts." },
-      { icon: ShieldCheck, title: "Secure Access", body: "Per-user roles, OTP login and audit trails." },
+      {
+        icon: ShieldCheck,
+        title: "Secure Access",
+        body: "Per-user roles, OTP login and audit trails.",
+      },
     ],
-    useCases: ["Universities", "Boarding schools", "Coaching institutes", "Vocational academies", "Multi-campus schools"],
+    useCases: [
+      "Universities",
+      "Boarding schools",
+      "Coaching institutes",
+      "Vocational academies",
+      "Multi-campus schools",
+    ],
   },
   "zean-member-app": {
     icon: Building2,
     hero: "A member-first mobile experience",
     sub: "A branded member app with digital passes, class bookings, dues and progress — plugs straight into your Zean Fitness setup.",
     features: [
-      { icon: Users, title: "Digital Membership", body: "Digital pass, QR entry and profile management." },
-      { icon: CalendarCheck, title: "Class Bookings", body: "See schedules, book classes and manage waitlists." },
-      { icon: Wallet, title: "Payments & Renewals", body: "Renew plans, pay dues via eSewa, Khalti or card." },
-      { icon: BarChart3, title: "Progress Tracking", body: "Attendance streaks, body metrics and PT logs." },
-      { icon: MessageSquare, title: "Notifications", body: "Renewal nudges, offers and class updates." },
-      { icon: ShieldCheck, title: "Privacy First", body: "Members control what they share with your club." },
+      {
+        icon: Users,
+        title: "Digital Membership",
+        body: "Digital pass, QR entry and profile management.",
+      },
+      {
+        icon: CalendarCheck,
+        title: "Class Bookings",
+        body: "See schedules, book classes and manage waitlists.",
+      },
+      {
+        icon: Wallet,
+        title: "Payments & Renewals",
+        body: "Renew plans, pay dues via eSewa, Khalti or card.",
+      },
+      {
+        icon: BarChart3,
+        title: "Progress Tracking",
+        body: "Attendance streaks, body metrics and PT logs.",
+      },
+      {
+        icon: MessageSquare,
+        title: "Notifications",
+        body: "Renewal nudges, offers and class updates.",
+      },
+      {
+        icon: ShieldCheck,
+        title: "Privacy First",
+        body: "Members control what they share with your club.",
+      },
     ],
-    useCases: ["Boutique gyms", "Multi-branch chains", "Yoga & pilates studios", "Wellness clubs", "Sports academies"],
+    useCases: [
+      "Boutique gyms",
+      "Multi-branch chains",
+      "Yoga & pilates studios",
+      "Wellness clubs",
+      "Sports academies",
+    ],
   },
 };
 
@@ -119,16 +238,22 @@ function ProductDetailPage() {
       <section className="border-b bg-surface">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Link to="/" className="hover:text-brand">Home</Link>
+            <Link to="/" className="hover:text-brand">
+              Home
+            </Link>
             <span>/</span>
-            <Link to="/products" className="hover:text-brand">Products</Link>
+            <Link to="/products" className="hover:text-brand">
+              Products
+            </Link>
             <span>/</span>
             <span className="text-foreground">{product.name}</span>
           </div>
 
           <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
             <div className="animate-fade-up">
-              <Badge className="w-fit bg-brand/10 text-brand hover:bg-brand/10">{product.tag}</Badge>
+              <Badge className="w-fit bg-brand/10 text-brand hover:bg-brand/10">
+                {product.tag}
+              </Badge>
               <h1 className="mt-4 font-heading text-4xl font-bold sm:text-5xl">{content.hero}</h1>
               <p className="mt-4 max-w-2xl text-muted-foreground">{content.sub}</p>
               <div className="mt-8 flex flex-wrap gap-3">
